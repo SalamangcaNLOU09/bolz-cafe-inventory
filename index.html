@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bolz Cafe - Inventory System</title>
+    <style>
+        :root { --primary: #4A3319; --accent: #D4A373; --bg: #FAEDCD; --white: #FFFFFF; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); margin: 0; padding: 0; }
+        header { background-color: var(--primary); color: var(--white); padding: 1rem; text-align: center; }
+        .container { max-width: 900px; margin: 2rem auto; padding: 1.5rem; background: var(--white); border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .hidden { display: none !important; }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
+        input, select, textarea { width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        button { background-color: var(--primary); color: var(--white); border: none; padding: 0.75rem 1.5rem; border-radius: 4px; cursor: pointer; font-size: 1rem; }
+        button:hover { background-color: #33220f; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: var(--accent); color: var(--primary); }
+        .error-msg { color: #d90429; font-size: 0.85rem; margin-top: 0.25rem; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Bolz Cafe Inventory Portal</h1>
+    </header>
+
+    <div class="container">
+        <div id="login-section">
+            <h2>Log In</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="login-username" required>
+                    <div id="username-error" class="error-msg"></div>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="login-password" required>
+                    <div id="password-error" class="error-msg"></div>
+                </div>
+                <button type="submit">Log In</button>
+            </form>
+        </div>
+
+        <div id="dashboard-section" class="hidden">
+            <h2 id="welcome-msg">Welcome</h2>
+            <button onclick="logout()">Log Out</button>
+            <hr>
+
+            <div id="manager-controls" class="hidden" style="margin-bottom: 20px;">
+                <h3>Manager Actions</h3>
+                <button onclick="showAddInventoryForm()">+ Add New Inventory Item</button>
+                <button onclick="showSignUpForm()">+ Create Employee/Manager Profile</button>
+            </div>
+
+            <h3>Inventory Item Listings</h3>
+            <div id="low-stock-alert" style="background: #ffccd5; padding: 10px; margin-bottom: 10px; border-radius: 4px;" class="hidden">
+                <strong>Low Stock Warning:</strong> Some items are running low!
+            </div>
+            
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Quantity</th>
+                            <th>Description</th>
+                            <th>Received Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventory-table-body">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div id="signup-section" class="hidden">
+            <h2>Create New Profile (Manager Only)</h2>
+            <form id="signup-form">
+                <div class="form-group"><label>Email</label><input type="email" id="su-email" required></div>
+                <div class="form-group"><label>Full Name</label><input type="text" id="su-fullname" required></div>
+                <div class="form-group"><label>Username</label><input type="text" id="su-username" required></div>
+                <div class="form-group"><label>Password</label><input type="password" id="su-password" required></div>
+                <div class="form-group"><label>Profile Picture URL</label><input type="text" id="su-pic"></div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="su-role"><option value="Employee">Employee</option><option value="Manager">Manager</option></select>
+                </div>
+                <button type="submit">Submit Profile</button>
+                <button type="button" onclick="backToDashboard()">Back to Dashboard</button>
+            </form>
+        </div>
+        
+        <div id="add-inventory-section" class="hidden">
+            <h2>Add Inventory Item (Manager Only)</h2>
+            <form id="add-inv-form">
+                <div class="form-group"><label>Item Name</label><input type="text" id="inv-name" required></div>
+                <div class="form-group"><label>Quantity</label><input type="number" id="inv-qty" required></div>
+                <div class="form-group"><label>Description</label><textarea id="inv-desc"></textarea></div>
+                <div class="form-group"><label>Delivery/Received Date</label><input type="date" id="inv-rcv-date" required></div>
+                <div class="form-group"><label>Expiration Date</label><input type="date" id="inv-exp-date"></div>
+                <div class="form-group"><label>Picture URL</label><input type="text" id="inv-pic"></div>
+                <button type="submit">Save Item</button>
+                <button type="button" onclick="backToDashboard()">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+        let currentUser = null;
+        let failedAttempts = 0;
+
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            
+            // Clear prior errors
+            document.getElementById('username-error').innerText = '';
+            document.getElementById('password-error').innerText = '';
+
+            try {
+                let response = await fetch(API_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ action: "login", username, password })
+                });
+                let result = await response.json();
+
+                if (result.status === "success") {
+                    currentUser = result.user;
+                    failedAttempts = 0; // reset
+                    loadDashboard();
+                } else {
+                    if (result.message.includes("Unrecognized username")) {
+                        document.getElementById('username-error').innerText = "Error you're entering an unauthorized account (Unrecognized username)";
+                    } else {
+                        failedAttempts++;
+                        if (failedAttempts >= 5) {
+                            document.getElementById('password-error').innerText = "You have entered 5 wrong attempts to enter this account.";
+                            document.getElementById('login-form').querySelector('button').disabled = true;
+                        } else {
+                            document.getElementById('password-error').innerText = `Incorrect password. Attempt ${failedAttempts}/5`;
+                        }
+                    }
+                }
+            } catch (err) {
+                alert("Connection error to database.");
+            }
+        });
+
+        async function loadDashboard() {
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('dashboard-section').classList.remove('hidden');
+            document.getElementById('welcome-msg').innerText = `Welcome, ${currentUser.fullname} (${currentUser.role})`;
+
+            if (currentUser.role === 'Manager') {
+                document.getElementById('manager-controls').classList.remove('hidden');
+            }
+            fetchInventory();
+        }
+
+        async function fetchInventory() {
+            let res = await fetch(API_URL);
+            let data = await res.json();
+            let tbody = document.getElementById('inventory-table-body');
+            tbody.innerHTML = '';
+            
+            let hasLowStock = false;
+
+            data.items.forEach(item => {
+                if(item.quantity <= 5) hasLowStock = true;
+                
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${item.name}</td>
+                    <td>${item.quantity}</td>
+                    <td>${item.description}</td>
+                    <td>${item.receivedDate}</td>
+                    <td>
+                        <button onclick="deductStock(${item.id})">Deduct</button>
+                        ${currentUser.role === 'Manager' ? `<button onclick="deleteItem(${item.id})" style="background:#d90429;">Delete</button>` : ''}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            if(hasLowStock) {
+                document.getElementById('low-stock-alert').classList.remove('hidden');
+            }
+        }
+
+        async function deductStock(id) {
+            let amount = prompt("Enter quantity to deduct:", "1");
+            if(amount) {
+                await fetch(API_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ action: "deductStock", id: id, deductAmount: amount })
+                });
+                fetchInventory();
+            }
+        }
+
+        async function deleteItem(id) {
+            if(confirm("Are you sure you want to remove this item?")) {
+                await fetch(API_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ action: "deleteItem", id: id })
+                });
+                fetchInventory();
+            }
+        }
+
+        function showAddInventoryForm() {
+            document.getElementById('dashboard-section').classList.add('hidden');
+            document.getElementById('add-inventory-section').classList.remove('hidden');
+        }
+
+        function showSignUpForm() {
+            document.getElementById('dashboard-section').classList.add('hidden');
+            document.getElementById('signup-section').classList.remove('hidden');
+        }
+
+        function backToDashboard() {
+            document.getElementById('add-inventory-section').classList.add('hidden');
+            document.getElementById('signup-section').classList.add('hidden');
+            document.getElementById('dashboard-section').classList.remove('hidden');
+            fetchInventory();
+        }
+
+        document.getElementById('add-inv-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            let payload = {
+                action: "addInventory",
+                name: document.getElementById('inv-name').value,
+                quantity: document.getElementById('inv-qty').value,
+                description: document.getElementById('inv-desc').value,
+                receivedDate: document.getElementById('inv-rcv-date').value,
+                expirationDate: document.getElementById('inv-exp-date').value,
+                picture: document.getElementById('inv-pic').value
+            };
+            await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
+            alert("Item Added!");
+            backToDashboard();
+        });
+
+        document.getElementById('signup-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            let payload = {
+                action: "signup",
+                email: document.getElementById('su-email').value,
+                fullname: document.getElementById('su-fullname').value,
+                username: document.getElementById('su-username').value,
+                password: document.getElementById('su-password').value,
+                profilePic: document.getElementById('su-pic').value,
+                role: document.getElementById('su-role').value
+            };
+            let res = await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
+            let result = await res.json();
+            alert(result.message);
+            backToDashboard();
+        });
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('dashboard-section').classList.add('hidden');
+            document.getElementById('manager-controls').classList.add('hidden');
+            document.getElementById('login-section').classList.remove('hidden');
+            document.getElementById('login-form').reset();
+        }
+    </script>
+</body>
+</html>
