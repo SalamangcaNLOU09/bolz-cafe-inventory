@@ -3,437 +3,504 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bolz Cafe - Digital Inventory System</title>
+    <title>Bolz Cafe Inventory System</title>
     <style>
-        :root { 
-            --primary: #3b2f2f; 
-            --primary-hover: #574646;
-            --accent: #c29b61; 
-            --bg: #f9f6f0; 
-            --danger: #b22222; 
-            --danger-hover: #8b0000;
-            --sidebar-width: 260px;
-            --card-bg: #ffffff;
-            --border-color: #e2e8f0;
+        :root {
+            --primary: #5A3D28;
+            --secondary: #C89F70;
+            --bg: #FDFBF7;
+            --text: #2C221E;
+            --accent: #A94438;
+            --white: #FFFFFF;
         }
-        * { box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; display: flex; height: 100vh; overflow: hidden; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+        
         .hidden { display: none !important; }
-        #login-wrapper { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(135deg, #3b2f2f 0%, #2a2121 100%); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .login-card { background: white; padding: 2.5rem; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); border-top: 5px solid var(--accent); }
-        aside { width: var(--sidebar-width); background: var(--primary); color: white; display: flex; flex-direction: column; justify-content: space-between; height: 100vh; box-shadow: 4px 0 10px rgba(0,0,0,0.05); z-index: 10; }
-        .sidebar-brand { padding: 1.5rem; font-size: 1.25rem; font-weight: bold; background: rgba(0,0,0,0.2); border-bottom: 1px solid rgba(255,255,255,0.1); text-align: center; color: var(--accent); }
-        .sidebar-menu { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
-        .sidebar-menu li a { display: block; padding: 1rem 1.5rem; color: #dcd6d0; text-decoration: none; font-weight: 500; border-left: 4px solid transparent; }
-        .sidebar-menu li a:hover, .sidebar-menu li a.active { background: rgba(255,255,255,0.08); color: white; border-left-color: var(--accent); }
-        .sidebar-footer { padding: 1rem 1.5rem; background: rgba(0,0,0,0.3); font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.1); }
-        .main-content { flex-grow: 1; display: flex; flex-direction: column; height: 100vh; overflow-y: auto; }
-        header { background: white; color: var(--primary); padding: 1rem 2rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-        header h1 { margin: 0; font-size: 1.4rem; }
-        .user-badge { display: flex; align-items: center; gap: 15px; font-size: 0.9rem; font-weight: 600; }
-        .container { max-width: 100%; margin: 0; padding: 2rem; }
-        .card-panel { background: var(--card-bg); padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border: 1px solid var(--border-color); margin-bottom: 1.5rem; }
-        .form-group { margin-bottom: 1rem; }
-        label { display: block; margin-bottom: 0.3rem; font-weight: 600; font-size: 0.9rem; }
-        input, select, textarea { width: 100%; padding: 0.6rem; border: 1px solid #ccc; border-radius: 4px; background: #fff; }
-        button { background: var(--primary); color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 4px; cursor: pointer; font-size: 0.95rem; font-weight: 500; }
-        button:hover { background: var(--primary-hover); }
-        button:disabled { background: #cbd5e0; cursor: not-allowed; }
-        .btn-danger { background: var(--danger); }
-        .btn-danger:hover { background: var(--danger-hover); }
-        table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; background: white; }
-        th, td { border: 1px solid #e2e8f0; padding: 12px 10px; text-align: left; font-size: 0.95rem; }
-        th { background: var(--accent); color: white; font-weight: 600; }
-        .error-text { color: var(--danger); font-size: 0.85rem; margin-top: 0.3rem; font-weight: bold; }
-        .low-stock { background-color: #ffcccc !important; }
-        .flex-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
-        .stat-box { background: white; padding: 1rem; border-radius: 6px; border: 1px solid var(--border-color); }
-        .stat-box h4 { margin: 0 0 5px 0; color: #666; font-size: 0.85rem; text-transform: uppercase; }
-        .stat-box span { font-size: 1.5rem; font-weight: bold; color: var(--primary); }
+        
+        /* Containers */
+        .auth-container { max-width: 420px; margin: 60px auto; background: var(--white); padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .dashboard { display: flex; flex: 1; height: 100vh; overflow: hidden; }
+        
+        /* Sidebar */
+        sidebar { width: 260px; background: var(--primary); color: var(--white); display: flex; flex-direction: column; padding: 20px; }
+        sidebar h2 { margin-bottom: 25px; font-size: 1.4rem; color: var(--secondary); text-align: center; }
+        sidebar a { color: var(--white); text-decoration: none; padding: 12px 15px; border-radius: 6px; margin-bottom: 8px; transition: 0.2s; cursor: pointer; display: block; font-size: 0.95rem; }
+        sidebar a:hover, sidebar a.active { background: var(--secondary); color: var(--primary); font-weight: bold; }
+        
+        /* Main Content */
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; background: var(--bg); }
+        
+        /* Forms & Inputs */
+        input, select, textarea { width: 100%; padding: 10px 14px; margin: 8px 0 16px 0; border: 1px solid #ccc; border-radius: 6px; font-size: 0.95rem; }
+        button { background: var(--primary); color: var(--white); border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.2s; }
+        button:hover { background: var(--secondary); color: var(--primary); }
+        .btn-danger { background: var(--accent); }
+        .btn-danger:hover { background: #8a332a; color: #fff; }
+        
+        label { font-size: 0.85rem; font-weight: bold; color: #555; }
+        
+        /* Tables & Cards */
+        table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-top: 15px; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: var(--secondary); color: var(--primary); }
+        
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; margin-top: 15px; }
+        .item-card { background: var(--white); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05); padding: 15px; display: flex; flex-direction: column; justify-content: space-between; }
+        .item-card img { width: 100%; height: 140px; object-fit: cover; border-radius: 6px; margin-bottom: 10px; }
+        
+        .error-msg { background: #ffebee; color: var(--accent); padding: 10px; border-radius: 6px; margin-bottom: 12px; font-size: 0.9rem; text-align: center; border: 1px solid #ffcdd2; }
+        .success-msg { background: #e8f5e9; color: #2e7d32; padding: 10px; border-radius: 6px; margin-bottom: 12px; font-size: 0.9rem; text-align: center; }
+        
+        .profile-img-preview { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--secondary); margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
-    <div id="login-wrapper">
-        <div class="login-card">
-            <h2 style="margin-top:0; color: var(--primary); text-align: center;">Bolz Cafe Portal</h2>
-            <p style="text-align: center; color: #666; font-size: 0.9rem; margin-bottom: 1.5rem;">Digital Inventory Management System</p>
-            <form id="login-form">
-                <div class="form-group">
-                    <label>Username</label>
-                    <input type="text" id="login-username" required autocomplete="username" placeholder="e.g. JuanX">
-                    <div id="username-err" class="error-text"></div>
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="password" id="login-password" required autocomplete="current-password" placeholder="••••••">
-                    <div id="password-err" class="error-text"></div>
-                </div>
-                <button type="submit" id="login-btn" style="width: 100%; margin-top: 10px;">Log In</button>
-            </form>
-        </div>
+    <div id="loginSection" class="auth-container">
+        <h2 style="text-align: center; color: var(--primary); margin-bottom: 20px;">☕ Bolz Cafe Log In</h2>
+        <div id="loginError" class="error-msg hidden"></div>
+        <form id="loginForm" onsubmit="handleLoginSubmit(event)">
+            <label>Username</label>
+            <input type="text" id="loginUsername" required placeholder="Enter username">
+            <label>Password (Double Security - Step 1/2)</label>
+            <input type="password" id="loginPassword" required placeholder="Enter password">
+            
+            <label id="secLabel" class="hidden">Security PIN (Step 2/2)</label>
+            <input type="password" id="loginSecPin" class="hidden" placeholder="Enter 4-digit PIN (e.g. 1234)">
+
+            <button type="submit" id="loginBtn">Log In</button>
+        </form>
     </div>
 
-    <aside id="desktop-sidebar" class="hidden">
-        <div>
-            <div class="sidebar-brand">Bolz Cafe OS</div>
-            <ul class="sidebar-menu">
-                <li><a href="#" id="nav-dashboard" onclick="showSection('dashboard-section')" class="active">📦 Inventory Listings</a></li>
-                <li id="menu-add-inv" class="hidden"><a href="#" id="nav-add-inv" onclick="showSection('add-inventory-section')">➕ Add Inventory Item</a></li>
-                <li id="menu-signup" class="hidden"><a href="#" id="nav-signup" onclick="showSection('signup-section')">👤 Create Staff Profile</a></li>
-                <li><a href="#" id="nav-profile" onclick="openProfile()">⚙️ Account & Profile</a></li>
-            </ul>
-        </div>
-        <div class="sidebar-footer">
-            <div id="sidebar-user-info" style="font-weight: bold; margin-bottom: 3px;">User</div>
-            <div id="sidebar-role-info" style="font-size: 0.75rem; color: var(--accent); text-transform: uppercase;">Role</div>
-        </div>
-    </aside>
-
-    <div id="desktop-workspace" class="main-content hidden">
-        <header>
-            <h1 id="workspace-header-title">Inventory Dashboard</h1>
-            <div class="user-badge">
-                <span id="welcome-title">Welcome</span>
-                <button onclick="logout()" class="btn-danger" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">Log Out</button>
+    <div id="dashboardSection" class="dashboard hidden">
+        <sidebar>
+            <h2>Bolz Cafe Inventory</h2>
+            <div id="userProfileSnippet" style="text-align: center; margin-bottom: 20px;">
+                <img id="sidebarPic" src="" class="profile-img-preview" style="width: 50px; height: 50px;">
+                <p id="sidebarName" style="font-size: 0.9rem; font-weight: bold;"></p>
+                <p id="sidebarRole" style="font-size: 0.75rem; color: var(--secondary);"></p>
             </div>
-        </header>
+            
+            <a onclick="switchTab('inventory')" class="active">View Inventory</a>
+            <a onclick="switchTab('lowStocks')">Low Stocks</a>
+            <a onclick="switchTab('addInventory')" id="navAdd" class="hidden">Add Inventory</a>
+            <a onclick="switchTab('editInventory')" id="navEdit" class="hidden">Edit Inventory</a>
+            <a onclick="switchTab('deductStock')">Item Quantity Deduction</a>
+            <a onclick="switchTab('profile')">Profile Management</a>
+            <a onclick="switchTab('signup')" id="navSignup" class="hidden">Create Profile (Sign Up)</a>
+            <a onclick="handleLogout()" style="margin-top: auto; background: var(--accent);">Log Out</a>
+        </sidebar>
 
-        <div class="container">
-            <div id="dashboard-section" class="hidden">
-                <div class="stats-grid">
-                    <div class="stat-box"><h4>Total Catalog Items</h4><span id="stat-total-items">0</span></div>
-                    <div class="stat-box"><h4>Low Stock Alerts</h4><span id="stat-low-stock" style="color: var(--danger);">0</span></div>
-                    <div class="stat-box"><h4>System Status</h4><span style="color: green; font-size: 1.1rem; line-height: 1.8rem;">● Online</span></div>
-                </div>
-
-                <div class="card-panel">
-                    <div class="flex-row" style="margin-bottom: 1rem;">
-                        <h3 style="margin:0;">Item Listings & Stock Management</h3>
-                        <span id="role-title" style="font-style:italic; font-size: 0.9rem; color: #666;"></span>
-                    </div>
-
-                    <div id="low-stock-banner" class="hidden" style="background:#fff3cd; border: 1px solid #ffeeba; color:#856404; padding:10px; margin-bottom:15px; border-radius:4px; font-weight:500;">
-                        ⚠️ Low Stock Warning: Items highlighted in red have 5 or fewer units remaining!
-                    </div>
-
-                    <div style="overflow-x:auto;">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Picture</th>
-                                    <th>Name</th>
-                                    <th>Description</th>
-                                    <th>Quantity</th>
-                                    <th>Received Date</th>
-                                    <th>Expiry Date</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="inventory-table-body"></tbody>
-                        </table>
-                    </div>
-                </div>
+        <div class="main-content">
+            
+            <div id="tab-inventory" class="tab-content">
+                <h2>Inventory Listing</h2>
+                <div id="inventoryContainer" class="card-grid"></div>
             </div>
 
-            <div id="signup-section" class="hidden">
-                <div class="card-panel" style="max-width: 600px; margin: 0 auto;">
-                    <h2>Create New Staff Profile</h2>
-                    <form id="signup-form">
-                        <div class="form-group"><label>Email</label><input type="email" id="su-email" required></div>
-                        <div class="form-group"><label>Full Name</label><input type="text" id="su-fullname" required></div>
-                        <div class="form-group"><label>Username</label><input type="text" id="su-username" required></div>
-                        <div class="form-group"><label>Password</label><input type="password" id="su-password" required></div>
-                        <div class="form-group"><label>Profile Picture URL</label><input type="text" id="su-pic"></div>
-                        <div class="form-group"><label>Role</label><select id="su-role"><option value="Employee">Employee</option><option value="Manager">Manager</option></select></div>
-                        <div style="margin-top: 1.5rem;">
-                            <button type="submit">Create Profile</button>
-                            <button type="button" onclick="showSection('dashboard-section')" style="background: #718096; margin-left: 10px;">Cancel</button>
-                        </div>
+            <div id="tab-lowStocks" class="tab-content hidden">
+                <h2>Low Stock Items (Quantity < 10)</h2>
+                <div id="lowStockContainer" class="card-grid"></div>
+            </div>
+
+            <div id="tab-addInventory" class="tab-content hidden">
+                <h2>Add New Inventory Item</h2>
+                <form onsubmit="handleAddItem(event)" style="max-width: 600px; background: var(--white); padding: 20px; border-radius: 8px;">
+                    <label>Item Name</label>
+                    <input type="text" id="addName" required>
+                    <label>Quantity</label>
+                    <input type="number" id="addQty" required min="0">
+                    <label>Description</label>
+                    <textarea id="addDesc" rows="3"></textarea>
+                    <label>Delivery / Received Date</label>
+                    <input type="date" id="addReceived" required>
+                    <label>Expiration Date</label>
+                    <input type="date" id="addExpiry" required>
+                    <label>Picture URL</label>
+                    <input type="url" id="addPic" placeholder="https://image-link.com">
+                    <button type="submit">Add Item</button>
+                </form>
+            </div>
+
+            <div id="tab-editInventory" class="tab-content hidden">
+                <h2>Manage / Edit Inventory Items</h2>
+                <div id="editInventoryTableContainer"></div>
+            </div>
+
+            <div id="tab-deductStock" class="tab-content hidden">
+                <h2>Deduct Item Quantities</h2>
+                <div id="deductContainer" class="card-grid"></div>
+            </div>
+
+            <div id="tab-profile" class="tab-content hidden">
+                <h2>User Profile Settings</h2>
+                <div style="max-width: 500px; background: var(--white); padding: 20px; border-radius: 8px;">
+                    <div id="profileMsg"></div>
+                    <form onsubmit="handleUpdateProfile(event)">
+                        <label>Email</label>
+                        <input type="email" id="profEmail" required>
+                        <label>Fullname</label>
+                        <input type="text" id="profFullname" required>
+                        <label>Username (Read-Only)</label>
+                        <input type="text" id="profUsername" readonly style="background: #eee;">
+                        <label>Password</label>
+                        <input type="text" id="profPassword" required>
+                        <label>Profile Picture URL</label>
+                        <input type="url" id="profPic">
+                        <label>Role</label>
+                        <input type="text" id="profRole" readonly style="background: #eee;">
+                        <button type="submit">Update Profile</button>
                     </form>
+                    <button onclick="handleDeleteProfile()" class="btn-danger" style="margin-top: 15px;">Delete My Account</button>
                 </div>
             </div>
 
-            <div id="profile-section" class="hidden">
-                <div class="card-panel" style="max-width: 600px; margin: 0 auto;">
-                    <h2>User Account Settings</h2>
-                    <div style="text-align: center; margin-bottom: 1.5rem;">
-                        <img id="profile-preview-img" src="" alt="Profile Pic" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent);" onerror="this.src='https://via.placeholder.com/90'">
-                    </div>
-                    <form id="profile-form">
-                        <div class="form-group"><label>Email</label><input type="email" id="pf-email" required></div>
-                        <div class="form-group"><label>Full Name</label><input type="text" id="pf-fullname" required></div>
-                        <div class="form-group"><label>Username</label><input type="text" id="pf-username" required></div>
-                        <div class="form-group"><label>Password</label><input type="text" id="pf-password" required></div>
-                        <div class="form-group"><label>Profile Picture URL</label><input type="text" id="pf-pic"></div>
-                        <div style="margin-top: 1.5rem; display: flex; gap: 10px; flex-wrap: wrap;">
-                            <button type="submit">Update Profile</button>
-                            <button type="button" onclick="deleteProfile()" class="btn-danger">Delete Account</button>
-                            <button type="button" onclick="showSection('dashboard-section')" style="background: #718096; margin-left: auto;">Back</button>
-                        </div>
-                    </form>
-                </div>
+            <div id="tab-signup" class="tab-content hidden">
+                <h2>Create Employee/Manager Profile</h2>
+                <form onsubmit="handleSignupSubmit(event)" style="max-width: 500px; background: var(--white); padding: 20px; border-radius: 8px;">
+                    <div id="signupMsg"></div>
+                    <label>Email</label>
+                    <input type="email" id="suEmail" required>
+                    <label>Fullname</label>
+                    <input type="text" id="suFullname" required>
+                    <label>Username</label>
+                    <input type="text" id="suUsername" required>
+                    <label>Password</label>
+                    <input type="password" id="suPassword" required>
+                    <label>Profile Picture URL</label>
+                    <input type="url" id="suPic">
+                    <label>Role</label>
+                    <select id="suRole">
+                        <option value="Employee">Employee</option>
+                        <option value="Manager">Manager</option>
+                    </select>
+                    <button type="submit">Create Account</button>
+                </form>
             </div>
 
-            <div id="add-inventory-section" class="hidden">
-                <div class="card-panel" style="max-width: 600px; margin: 0 auto;">
-                    <h2>Add Inventory Item</h2>
-                    <form id="add-inventory-form">
-                        <div class="form-group"><label>Item Name</label><input type="text" id="inv-name" required></div>
-                        <div class="form-group"><label>Quantity</label><input type="number" id="inv-qty" required min="0"></div>
-                        <div class="form-group"><label>Description</label><textarea id="inv-desc" rows="3"></textarea></div>
-                        <div class="form-group"><label>Delivery/Received Date</label><input type="date" id="inv-rcv" required></div>
-                        <div class="form-group"><label>Expiration Date</label><input type="date" id="inv-exp"></div>
-                        <div class="form-group"><label>Picture URL</label><input type="text" id="inv-pic"></div>
-                        <div style="margin-top: 1.5rem;">
-                            <button type="submit">Save Item</button>
-                            <button type="button" onclick="showSection('dashboard-section')" style="background: #718096; margin-left: 10px;">Cancel</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <div id="edit-inventory-section" class="hidden">
-                <div class="card-panel" style="max-width: 600px; margin: 0 auto;">
-                    <h2>Edit Inventory Item</h2>
-                    <form id="edit-inventory-form">
-                        <input type="hidden" id="edit-inv-id">
-                        <div class="form-group"><label>Item Name</label><input type="text" id="edit-inv-name" readonly style="background: #edf2f7;"></div>
-                        <div class="form-group"><label>Quantity</label><input type="number" id="edit-inv-qty" required min="0"></div>
-                        <div class="form-group"><label>Edit Received Date</label><input type="date" id="edit-inv-rcv" required></div>
-                        <div style="margin-top: 1.5rem;">
-                            <button type="submit">Update Changes</button>
-                            <button type="button" onclick="showSection('dashboard-section')" style="background: #718096; margin-left: 10px;">Cancel</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
         </div>
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbx6yZzKwS5lGQafVRuJQVrujtbKuoHHkzUvheFUobG2uwO71FUZYlobZFJ6XmXal9lg4w/exec";
+        // REPLACE WITH YOUR GOOGLE APPS SCRIPT WEB APP URL
+        const API_URL = "https://script.google.com/macros/s/AKfycbxjH8wsLp8WpFqpkOT6P0QqpNimxgNe534wrk3cMU9o9YvcQ0GHWzOW4vdMpoijyjc/exec";
+        
         let currentUser = null;
+        let inventoryItems = [];
         let failedAttempts = 0;
+        let pinStepActive = false;
 
-        function showSection(sectionId) {
-            document.querySelectorAll('.container > div').forEach(div => div.classList.add('hidden'));
-            document.getElementById(sectionId).classList.remove('hidden');
-            document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
-            if(sectionId === 'dashboard-section') {
-                document.getElementById('nav-dashboard').classList.add('active');
-                document.getElementById('workspace-header-title').innerText = "Inventory Dashboard";
-                fetchInventory();
-            } else if(sectionId === 'add-inventory-section') {
-                document.getElementById('nav-add-inv').classList.add('active');
-                document.getElementById('workspace-header-title').innerText = "Add Inventory Item";
-            } else if(sectionId === 'signup-section') {
-                document.getElementById('nav-signup').classList.add('active');
-                document.getElementById('workspace-header-title').innerText = "Create Staff Profile";
+        async function apiCall(payload) {
+            try {
+                let res = await fetch(API_URL, {
+                    method: "POST",
+                    body: JSON.stringify(payload)
+                });
+                return await res.json();
+            } catch (err) {
+                console.error("API Error:", err);
+                alert("Network communication error with Google Sheets backend.");
+                return { status: "error" };
             }
         }
 
-        document.getElementById('login-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const username = document.getElementById('login-username').value;
-            const password = document.getElementById('login-password').value;
-            document.getElementById('username-err').innerText = "";
-            document.getElementById('password-err').innerText = "";
-
-            try {
-                let res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "login", username, password }) });
-                let result = await res.json();
-
-                if (result.status === "success") {
-                    currentUser = result.user;
-                    failedAttempts = 0;
-                    document.getElementById('welcome-title').innerText = `Welcome, ${currentUser.fullname}`;
-                    document.getElementById('role-title').innerText = `Role: ${currentUser.role}`;
-                    document.getElementById('sidebar-user-info').innerText = currentUser.fullname;
-                    document.getElementById('sidebar-role-info').innerText = `Access: ${currentUser.role}`;
-
-                    if(currentUser.role === 'Manager') {
-                        document.getElementById('menu-add-inv').classList.remove('hidden');
-                        document.getElementById('menu-signup').classList.remove('hidden');
-                    } else {
-                        document.getElementById('menu-add-inv').classList.add('hidden');
-                        document.getElementById('menu-signup').classList.add('hidden');
-                    }
-
-                    document.getElementById('login-wrapper').classList.add('hidden');
-                    document.getElementById('desktop-sidebar').classList.remove('hidden');
-                    document.getElementById('desktop-workspace').classList.remove('hidden');
-                    showSection('dashboard-section');
-                    document.getElementById('login-form').reset();
-                } else {
-                    if (result.message.includes("Unrecognized username")) {
-                        document.getElementById('username-err').innerText = "Error your entering an unauthorized account(Unrecognized username)";
-                    } else if (result.message === "incorrect_password") {
-                        failedAttempts++;
-                        if (failedAttempts >= 5) {
-                            document.getElementById('password-err').innerText = "You have entered 5 wrong attempts to enter this account.";
-                            document.getElementById('login-btn').disabled = true;
-                        } else {
-                            document.getElementById('password-err').innerText = `Incorrect password. Attempt ${failedAttempts}/5`;
-                        }
-                    }
-                }
-            } catch (err) {
-                alert("Network error or incorrect Apps Script deployment URL.");
+        // LOGIN SYSTEM WITH DOUBLE SECURITY CHECK
+        async function handleLoginSubmit(event) {
+            event.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
+            
+            if (failedAttempts >= 5) {
+                errorDiv.innerText = "You have entered 5 wrong attempts to enter this account.";
+                errorDiv.classList.remove('hidden');
+                return;
             }
-        });
+
+            // Double security simulation (Step 2 pin check after 1st attempt configuration)
+            if (!pinStepActive) {
+                document.getElementById('secLabel').classList.remove('hidden');
+                document.getElementById('loginSecPin').classList.remove('hidden');
+                pinStepActive = true;
+                return;
+            }
+
+            let res = await apiCall({ action: "login", username, password });
+
+            if (res.status === "success") {
+                currentUser = res.user;
+                failedAttempts = 0;
+                initDashboard();
+            } else {
+                failedAttempts++;
+                if (res.message === "unauthorized") {
+                    errorDiv.innerText = "Error your entering an unauthorized account (Unrecognized username)";
+                } else if (res.message === "wrong_password") {
+                    errorDiv.innerText = `Wrong password. Attempt ${failedAttempts}/5.`;
+                }
+                errorDiv.classList.remove('hidden');
+                
+                if (failedAttempts >= 5) {
+                    errorDiv.innerText = "You have entered 5 wrong attempts to enter this account.";
+                    document.getElementById('loginBtn').disabled = true;
+                }
+            }
+        }
+
+        async function initDashboard() {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('dashboardSection').classList.remove('hidden');
+            
+            document.getElementById('sidebarName').innerText = currentUser.fullname;
+            document.getElementById('sidebarRole').innerText = currentUser.role;
+            document.getElementById('sidebarPic').src = currentUser.profilePic || 'https://via.placeholder.com/80';
+
+            // Role access restriction mapping
+            if (currentUser.role === "Manager") {
+                document.getElementById('navAdd').classList.remove('hidden');
+                document.getElementById('navEdit').classList.remove('hidden');
+                document.getElementById('navSignup').classList.remove('hidden');
+            }
+
+            loadProfileData();
+            await fetchInventory();
+        }
 
         async function fetchInventory() {
-            let res = await fetch(API_URL);
-            let result = await res.json();
-            let tbody = document.getElementById('inventory-table-body');
-            tbody.innerHTML = "";
-            let lowStockTriggered = false;
-            let lowCount = 0;
-
-            result.items.forEach(item => {
-                let isLow = parseInt(item.quantity) <= 5;
-                if(isLow) { lowStockTriggered = true; lowCount++; }
-                let tr = document.createElement('tr');
-                if(isLow) tr.classList.add('low-stock');
-                tr.innerHTML = `
-                    <td><img src="${item.picture || 'https://via.placeholder.com/50'}" width="45" height="45" style="object-fit:cover; border-radius:4px;"></td>
-                    <td><strong>${item.name}</strong></td>
-                    <td>${item.description || 'N/A'}</td>
-                    <td><span style="font-size:1.05rem; font-weight:bold;">${item.quantity}</span></td>
-                    <td>${item.deliveryDate}</td>
-                    <td>${item.expiryDate || 'N/A'}</td>
-                    <td>
-                        <button onclick="deductStock(${item.id})" style="padding: 0.35rem 0.7rem; font-size: 0.85rem;">Deduct</button>
-                        ${currentUser.role === 'Manager' ? `
-                            <button onclick="openEditInventory(${item.id}, '${item.name}', ${item.quantity}, '${item.deliveryDate}')" style="padding: 0.35rem 0.7rem; font-size: 0.85rem; background:#3182ce; margin-left: 5px;">Edit</button>
-                            <button onclick="deleteItem(${item.id})" class="btn-danger" style="padding: 0.35rem 0.7rem; font-size: 0.85rem; margin-left: 5px;">Remove</button>
-                        ` : ''}
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            document.getElementById('stat-total-items').innerText = result.items.length;
-            document.getElementById('stat-low-stock').innerText = lowCount;
-            if(lowStockTriggered) document.getElementById('low-stock-banner').classList.remove('hidden');
-            else document.getElementById('low-stock-banner').classList.add('hidden');
+            let res = await apiCall({ action: "getInventory" });
+            if (res.status === "success") {
+                inventoryItems = res.items;
+                renderAllViews();
+            }
         }
 
-        async function deductStock(id) {
-            let amount = prompt("Enter quantity to deduct:", "1");
-            if(amount && !isNaN(amount)) {
-                await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "deductStock", id: id, deductAmount: amount }) });
+        function renderAllViews() {
+            renderInventory();
+            renderLowStocks();
+            renderEditInventory();
+            renderDeductStock();
+        }
+
+        // 1. VIEW INVENTORY
+        function renderInventory() {
+            let container = document.getElementById('inventoryContainer');
+            container.innerHTML = inventoryItems.map(item => `
+                <div class="item-card">
+                    <div>
+                        <img src="${item.picture || 'https://via.placeholder.com/200'}" alt="${item.name}">
+                        <h3>${item.name}</h3>
+                        <p style="font-size:0.85rem; color:#666; margin:5px 0;">${item.description}</p>
+                    </div>
+                    <div>
+                        <p style="font-weight:bold; color:var(--primary);">Qty: ${item.quantity}</p>
+                        <p style="font-size:0.75rem; color:#888;">Exp: ${item.expiryDate}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 2. LOW STOCKS (< 10)
+        function renderLowStocks() {
+            let container = document.getElementById('lowStockContainer');
+            let lowItems = inventoryItems.filter(item => Number(item.quantity) < 10);
+            
+            if (lowItems.length === 0) {
+                container.innerHTML = "<p>No low stock items found! All clear.</p>";
+                return;
+            }
+
+            container.innerHTML = lowItems.map(item => `
+                <div class="item-card" style="border-left: 4px solid var(--accent);">
+                    <div>
+                        <img src="${item.picture || 'https://via.placeholder.com/200'}" alt="${item.name}">
+                        <h3>${item.name}</h3>
+                        <p style="font-size:0.85rem; color:#666;">${item.description}</p>
+                    </div>
+                    <div>
+                        <p style="font-weight:bold; color:var(--accent);">Critical Qty: ${item.quantity}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 3. ADD INVENTORY
+        async function handleAddItem(e) {
+            e.preventDefault();
+            let payload = {
+                action: "addItem",
+                name: document.getElementById('addName').value,
+                quantity: document.getElementById('addQty').value,
+                description: document.getElementById('addDesc').value,
+                receivedDate: document.getElementById('addReceived').value,
+                expiryDate: document.getElementById('addExpiry').value,
+                picture: document.getElementById('addPic').value
+            };
+            let res = await apiCall(payload);
+            if (res.status === "success") {
+                alert("Item added successfully!");
+                e.target.reset();
+                fetchInventory();
+                switchTab('inventory');
+            }
+        }
+
+        // 4. EDIT INVENTORY (Manager Only)
+        function renderEditInventory() {
+            let container = document.getElementById('editInventoryTableContainer');
+            if (currentUser.role !== "Manager") {
+                container.innerHTML = "<p>Unauthorized feature. Manager access required.</p>";
+                return;
+            }
+
+            container.innerHTML = `
+                <table>
+                    <tr><th>Name</th><th>Qty</th><th>Received Date</th><th>Actions</th></tr>
+                    ${inventoryItems.map(item => `
+                        <tr>
+                            <td><input type="text" id="ename-${item.rowId}" value="${item.name}"></td>
+                            <td><input type="number" id="eqty-${item.rowId}" value="${item.quantity}" style="width:80px;"></td>
+                            <td><input type="date" id="erec-${item.rowId}" value="${item.receivedDate}"></td>
+                            <td>
+                                <button onclick="saveItemEdit(${item.rowId})" style="padding:6px 10px; width:auto;">Save</button>
+                                <button onclick="deleteItemRow(${item.rowId})" class="btn-danger" style="padding:6px 10px; width:auto; margin-top:4px;">Delete</button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </table>
+            `;
+        }
+
+        async function saveItemEdit(rowId) {
+            let original = inventoryItems.find(i => i.rowId === rowId);
+            let payload = {
+                action: "updateItem",
+                rowId: rowId,
+                name: document.getElementById(`ename-${rowId}`).value,
+                quantity: document.getElementById(`eqty-${rowId}`).value,
+                receivedDate: document.getElementById(`erec-${rowId}`).value,
+                description: original.description,
+                expiryDate: original.expiryDate,
+                picture: original.picture
+            };
+            let res = await apiCall(payload);
+            if(res.status === "success") {
+                alert("Item updated successfully!");
                 fetchInventory();
             }
         }
 
-        async function deleteItem(id) {
-            if(confirm("Are you sure you want to remove this item?")) {
-                await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "deleteItem", id: id }) });
+        async function deleteItemRow(rowId) {
+            if(confirm("Are you sure you want to delete this item?")) {
+                let res = await apiCall({ action: "deleteItem", rowId: rowId });
+                if(res.status === "success") {
+                    fetchInventory();
+                }
+            }
+        }
+
+        // 5. ITEM QUANTITY DEDUCTION
+        function renderDeductStock() {
+            let container = document.getElementById('deductContainer');
+            container.innerHTML = inventoryItems.map(item => `
+                <div class="item-card">
+                    <div>
+                        <img src="${item.picture || 'https://via.placeholder.com/200'}" alt="${item.name}">
+                        <h3>${item.name}</h3>
+                        <p style="font-weight:bold;">Stock: ${item.quantity}</p>
+                    </div>
+                    <div style="margin-top:10px;">
+                        <input type="number" id="deduct-val-${item.rowId}" min="1" value="1" style="margin-bottom:5px;">
+                        <button onclick="executeDeduction(${item.rowId})" class="btn-danger">Deduct Stock</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function executeDeduction(rowId) {
+            let amount = Number(document.getElementById(`deduct-val-${rowId}`).value);
+            let res = await apiCall({ action: "deductStock", rowId: rowId, deductAmount: amount });
+            if(res.status === "success") {
+                alert("Stock deducted successfully!");
                 fetchInventory();
             }
         }
 
-        function openEditInventory(id, name, qty, rcv) {
-            document.getElementById('edit-inv-id').value = id;
-            document.getElementById('edit-inv-name').value = name;
-            document.getElementById('edit-inv-qty').value = qty;
-            document.getElementById('edit-inv-rcv').value = rcv;
-            showSection('edit-inventory-section');
+        // PROFILE MANAGEMENT (View, Update, Delete Profile)
+        function loadProfileData() {
+            document.getElementById('profEmail').value = currentUser.email;
+            document.getElementById('profFullname').value = currentUser.fullname;
+            document.getElementById('profUsername').value = currentUser.username;
+            document.getElementById('profPassword').value = currentUser.password || '';
+            document.getElementById('profPic').value = currentUser.profilePic;
+            document.getElementById('profRole').value = currentUser.role;
         }
 
-        document.getElementById('edit-inventory-form').addEventListener('submit', async function(e) {
+        async function handleUpdateProfile(e) {
             e.preventDefault();
             let payload = {
-                action: "updateInventory",
-                id: document.getElementById('edit-inv-id').value,
-                quantity: document.getElementById('edit-inv-qty').value,
-                deliveryDate: document.getElementById('edit-inv-rcv').value
+                action: "updateProfile",
+                email: document.getElementById('profEmail').value,
+                fullname: document.getElementById('profFullname').value,
+                username: document.getElementById('profUsername').value,
+                password: document.getElementById('profPassword').value,
+                profilePic: document.getElementById('profPic').value,
+                role: document.getElementById('profRole').value
             };
-            await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
-            alert("Inventory updated successfully!");
-            showSection('dashboard-section');
-        });
+            let res = await apiCall(payload);
+            if(res.status === "success") {
+                currentUser = payload;
+                document.getElementById('profileMsg').innerHTML = `<div class="success-msg">Profile updated successfully!</div>`;
+                initDashboard();
+            }
+        }
 
-        document.getElementById('add-inventory-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            let payload = {
-                action: "addInventory",
-                name: document.getElementById('inv-name').value,
-                description: document.getElementById('inv-desc').value,
-                quantity: document.getElementById('inv-qty').value,
-                deliveryDate: document.getElementById('inv-rcv').value,
-                expiryDate: document.getElementById('inv-exp').value,
-                picture: document.getElementById('inv-pic').value
-            };
-            await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
-            alert("Item added successfully!");
-            document.getElementById('add-inventory-form').reset();
-            showSection('dashboard-section');
-        });
+        async function handleDeleteProfile() {
+            if(confirm("Are you sure you want to delete your profile account?")) {
+                let res = await apiCall({ action: "deleteProfile", username: currentUser.username });
+                if(res.status === "success") {
+                    alert("Account deleted.");
+                    handleLogout();
+                }
+            }
+        }
 
-        document.getElementById('signup-form').addEventListener('submit', async function(e) {
+        // 7. CREATE PROFILE / SIGN UP (Manager Only Feature)
+        async function handleSignupSubmit(e) {
             e.preventDefault();
             let payload = {
                 action: "signup",
-                email: document.getElementById('su-email').value,
-                fullname: document.getElementById('su-fullname').value,
-                username: document.getElementById('su-username').value,
-                password: document.getElementById('su-password').value,
-                profilePic: document.getElementById('su-pic').value,
-                role: document.getElementById('su-role').value
+                email: document.getElementById('suEmail').value,
+                fullname: document.getElementById('suFullname').value,
+                username: document.getElementById('suUsername').value,
+                password: document.getElementById('suPassword').value,
+                profilePic: document.getElementById('suPic').value,
+                role: document.getElementById('suRole').value
             };
-            let res = await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
-            let result = await res.json();
-            alert(result.message);
-            document.getElementById('signup-form').reset();
-            showSection('dashboard-section');
-        });
-
-        function openProfile() {
-            document.getElementById('pf-email').value = currentUser.email;
-            document.getElementById('pf-fullname').value = currentUser.fullname;
-            document.getElementById('pf-username').value = currentUser.username;
-            document.getElementById('pf-password').value = currentUser.password;
-            document.getElementById('pf-pic').value = currentUser.profilePic;
-            document.getElementById('profile-preview-img').src = currentUser.profilePic || '';
-            showSection('profile-section');
-        }
-
-        document.getElementById('profile-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            currentUser.email = document.getElementById('pf-email').value;
-            currentUser.fullname = document.getElementById('pf-fullname').value;
-            currentUser.username = document.getElementById('pf-username').value;
-            currentUser.password = document.getElementById('pf-password').value;
-            currentUser.profilePic = document.getElementById('pf-pic').value;
-
-            let payload = { action: "updateProfile", ...currentUser };
-            let res = await fetch(API_URL, { method: "POST", body: JSON.stringify(payload) });
-            let result = await res.json();
-            alert(result.message);
-            showSection('dashboard-section');
-        });
-
-        async function deleteProfile() {
-            if(confirm("Are you sure you want to delete your profile account?")) {
-                let res = await fetch(API_URL, { method: "POST", body: JSON.stringify({ action: "deleteProfile", rowIdx: currentUser.rowIdx }) });
-                let result = await res.json();
-                alert(result.message);
-                logout();
+            let res = await apiCall(payload);
+            if(res.status === "success") {
+                document.getElementById('signupMsg').innerHTML = `<div class="success-msg">Account created successfully!</div>`;
+                e.target.reset();
             }
         }
 
-        function logout() {
+        function handleLogout() {
             currentUser = null;
-            failedAttempts = 0;
-            document.getElementById('login-btn').disabled = false;
-            document.getElementById('login-form').reset();
-            document.getElementById('desktop-sidebar').classList.add('hidden');
-            document.getElementById('desktop-workspace').classList.add('hidden');
-            document.getElementById('login-wrapper').classList.remove('hidden');
+            pinStepActive = false;
+            document.getElementById('dashboardSection').classList.add('hidden');
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('loginForm').reset();
+            document.getElementById('loginError').classList.add('hidden');
+            document.getElementById('secLabel').classList.add('hidden');
+            document.getElementById('loginSecPin').classList.add('hidden');
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            
+            document.querySelectorAll('sidebar a').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
         }
     </script>
 </body>
