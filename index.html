@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bolz Cafe Inventory Portal</title>
-    <!-- Google Fonts for a modern, cozy cafe aesthetic -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -16,12 +15,11 @@
             --card-bg: #ffffff;
             --text: #2c221e;
             --text-light: #7f6d63;
-            --border: #e6dfd5;
+            --border: #cccccc;
             --error: #b74f4f;
-            --success: #606c38;
-            --radius: 12px;
-            --shadow: 0 10px 25px rgba(59, 39, 26, 0.08);
-            --transition: all 0.3s ease;
+            --radius: 8px;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            --transition: all 0.2s ease;
         }
 
         * {
@@ -39,389 +37,475 @@
             flex-direction: column;
         }
 
-        header {
-            background: linear-gradient(135deg, var(--primary), #5a3d2b);
-            color: white;
-            padding: 1.5rem 2rem;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
+        .hidden { display: none !important; }
 
-        header h1 {
-            font-weight: 600;
-            font-size: 1.75rem;
-            letter-spacing: 0.5px;
-        }
-
-        .main-wrapper {
+        /* Login Screen Layout matching wireframe */
+        .login-wrapper {
             flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 2rem 1rem;
+            padding: 2rem;
         }
 
-        .container {
+        .login-box {
             width: 100%;
-            max-width: 950px;
-            background: var(--card-bg);
-            padding: 2.5rem;
+            max-width: 600px;
+            background: white;
+            padding: 3rem 2.5rem;
             border-radius: var(--radius);
             box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-        }
-
-        .hidden { display: none !important; }
-
-        /* Form elements */
-        h2, h3 {
-            color: var(--primary);
-            margin-bottom: 1.25rem;
-            font-weight: 600;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 0.4rem;
-            font-weight: 500;
-            font-size: 0.9rem;
-            color: var(--text-light);
-        }
-
-        input, select {
-            width: 100%;
-            padding: 12px 16px;
-            margin-bottom: 1.25rem;
             border: 1.5px solid var(--border);
-            border-radius: 8px;
-            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        .login-box h2 {
+            font-size: 1.25rem;
             color: var(--text);
-            background-color: #fdfbf7;
-            transition: var(--transition);
+            margin-bottom: 2rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
 
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--secondary);
-            background-color: #fff;
-            box-shadow: 0 0 0 3px rgba(176, 137, 104, 0.15);
-        }
-
-        button {
+        .login-box input {
             width: 100%;
-            padding: 12px 20px;
-            background-color: var(--primary);
+            padding: 14px 18px;
+            margin-bottom: 1.25rem;
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            font-size: 0.95rem;
+            background-color: #f5f5f5;
+            text-align: center;
+        }
+
+        .login-box input:focus {
+            outline: none;
+            background-color: white;
+            border-color: var(--primary);
+        }
+
+        .login-box button {
+            width: 160px;
+            padding: 12px;
+            background-color: #7f7f7f;
             color: white;
             font-weight: 600;
-            font-size: 1rem;
             border: none;
-            border-radius: 8px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: var(--transition);
+        }
+
+        .login-box button:hover {
+            background-color: var(--primary);
+        }
+
+        /* Dashboard Layout matching Wireframe Sidebar + Card View */
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+            background-color: #ffffff;
+        }
+
+        /* Sidebar Wireframe Style */
+        .sidebar {
+            width: 240px;
+            background-color: #f4f4f4;
+            border-right: 1.5px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 1.5rem 0;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-menu button {
+            background: none;
+            border: none;
+            text-align: left;
+            padding: 12px 2rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text);
             cursor: pointer;
             transition: var(--transition);
-            box-shadow: 0 4px 12px rgba(59, 39, 26, 0.2);
+            border-left: 4px solid transparent;
         }
 
-        button:hover {
-            background-color: var(--primary-hover);
-            transform: translateY(-1px);
+        .sidebar-menu button:hover, .sidebar-menu button.active {
+            background-color: #e9e9e9;
+            border-left-color: var(--primary);
+            color: var(--primary);
         }
 
-        button:active {
-            transform: translateY(0);
+        .sidebar-footer {
+            padding: 0 2rem;
+        }
+
+        .sidebar-footer button {
+            background: none;
+            border: none;
+            text-align: left;
+            padding: 8px 0;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-navbar {
+            height: 60px;
+            border-bottom: 1.5px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            background-color: #ffffff;
+        }
+
+        .top-navbar .brand {
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            border: 1px solid var(--border);
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: #fafafa;
+        }
+
+        .user-pill img {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .content-body {
+            padding: 2rem;
+            flex: 1;
+            background-color: #fafafa;
+            overflow-y: auto;
+        }
+
+        .content-body h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* Wireframe Item Cards Feed */
+        .item-card {
+            background: white;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            position: relative;
+        }
+
+        .item-card-left {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .item-img-placeholder {
+            width: 90px;
+            height: 90px;
+            border: 1.5px dashed var(--border);
+            border-radius: 6px;
+            object-fit: cover;
+            background: #eee;
+        }
+
+        .item-details p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 4px;
+        }
+
+        .item-details .item-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text);
+        }
+
+        .item-card-right {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        .qty-badge {
+            font-size: 0.85rem;
+            border: 1px solid var(--border);
+            padding: 4px 12px;
+            border-radius: 4px;
+            background: #fff;
+            font-weight: 500;
+        }
+
+        .action-link-btn {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        /* Form Card Containers (Add / Edit / Signup) */
+        .form-card-container {
+            background: white;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-card-container label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .form-card-container input, .form-card-container select {
+            width: 100%;
+            padding: 10px 14px;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.9rem;
+            background: #fff;
+        }
+
+        .form-card-container button.submit-btn {
+            background: #7f7f7f;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            float: right;
+        }
+
+        .form-card-container button.submit-btn:hover {
+            background: var(--primary);
+        }
+
+        /* Profile View Wireframe Style */
+        .profile-wireframe {
+            background: white;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2.5rem;
+            max-width: 650px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .profile-header-flex {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-avatar-circle {
+            width: 90px;
+            height: 90px;
+            border: 1.5px solid var(--border);
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            background: #eee;
+        }
+
+        .profile-details-grid p {
+            font-size: 0.9rem;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
         }
 
         .error-msg {
             color: var(--error);
             font-size: 0.85rem;
+            margin-bottom: 1rem;
+            text-align: center;
             font-weight: 500;
-            margin-bottom: 1rem;
-            background: #fdf2f2;
-            padding: 10px;
-            border-radius: 6px;
-            border-left: 4px solid var(--error);
-        }
-
-        /* Dashboard Navigation Bar */
-        .nav-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            background: #f4efe6;
-            padding: 10px;
-            border-radius: 10px;
-            margin-bottom: 2rem;
-            border: 1px solid var(--border);
-        }
-
-        .nav-bar button {
-            flex: 1;
-            min-width: 110px;
-            background-color: white;
-            color: var(--primary);
-            font-size: 0.85rem;
-            padding: 10px;
-            box-shadow: none;
-            border: 1px solid var(--border);
-        }
-
-        .nav-bar button:hover {
-            background-color: var(--accent);
-            color: var(--primary);
-        }
-
-        .nav-bar button.logout-btn {
-            background-color: #fff1f1;
-            color: var(--error);
-            border-color: #f5c6c6;
-        }
-
-        .nav-bar button.logout-btn:hover {
-            background-color: var(--error);
-            color: white;
-        }
-
-        /* Tables */
-        .table-responsive {
-            overflow-x: auto;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            margin-top: 1rem;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            font-size: 0.95rem;
-        }
-
-        th, td {
-            padding: 14px 18px;
-            vertical-align: middle;
-        }
-
-        th {
-            background-color: #f4efe6;
-            color: var(--primary);
-            font-weight: 600;
-            border-bottom: 2px solid var(--border);
-        }
-
-        tr:not(:last-child) td {
-            border-bottom: 1px solid var(--border);
-        }
-
-        tr:hover td {
-            background-color: #fdfbf7;
-        }
-
-        /* Item Thumbnail in Table */
-        .item-thumbnail {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            border-radius: 8px; /* Square with corner radius */
-            border: 1px solid var(--border);
-            background-color: #fff;
-        }
-
-        /* Profile Card Styling */
-        .profile-card {
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-            background: #fdfbf7;
-            padding: 2rem;
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            margin-top: 1rem;
-        }
-
-        .profile-card img {
-            width: 110px;
-            height: 110px;
-            border-radius: 50%; /* Perfect circle */
-            object-fit: cover;
-            border: 3px solid var(--secondary);
-            box-shadow: var(--shadow);
-        }
-
-        .profile-info p {
-            margin-bottom: 0.5rem;
-            font-size: 1rem;
-        }
-
-        /* Utility action buttons inside tabs */
-        .tab-action-btn {
-            background-color: var(--secondary);
-            width: auto;
-            padding: 8px 16px;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-
-        .tab-action-btn.danger {
-            background-color: var(--error);
-            margin-left: 10px;
-        }
-
-        /* Welcome text header inside dashboard */
-        #user-welcome h3 {
-            font-size: 1.25rem;
-            color: var(--text-light);
-            margin-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 0.75rem;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>☕ Bolz Cafe Inventory Portal</h1>
-    </header>
+    <!-- LOGIN SCREEN -->
+    <div id="login-section" class="login-wrapper">
+        <div class="login-box">
+            <h2>Bolz Cafe Inventory System</h2>
+            <div id="login-error" class="error-msg hidden"></div>
+            <input type="text" id="login-username" placeholder="USER NAME">
+            <input type="password" id="login-password" placeholder="PASSWORD">
+            <input type="password" id="login-pin" maxlength="6" placeholder="SECURITY PIN">
+            <br>
+            <button onclick="handleLogin()">LOG IN</button>
+        </div>
+    </div>
 
-    <div class="main-wrapper">
-        <div class="container">
-            <!-- LOGIN SCREEN -->
-            <div id="login-section">
-                <h2>Secure Login</h2>
-                <div id="login-error" class="error-msg hidden"></div>
-                <label>Username</label>
-                <input type="text" id="login-username" placeholder="Enter your username">
-                <label>Password</label>
-                <input type="password" id="login-password" placeholder="Enter your password">
-                <label>Security PIN (Double Security)</label>
-                <input type="password" id="login-pin" maxlength="6" placeholder="Enter 6-digit PIN">
-                <button onclick="handleLogin()">Log In to Portal</button>
+    <!-- DASHBOARD SECTION -->
+    <div id="dashboard-section" class="dashboard-container hidden">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-menu">
+                <button onclick="switchTab('view-inventory', this)" id="nav-inventory" class="active">INVENTORY</button>
+                <button onclick="switchTab('low-stocks', this)" id="nav-low">LOW STOCKS</button>
+                <button onclick="switchTab('deduct-stock', this)" id="nav-deduct">DEDUCT ITEM</button>
+                <button id="menu-add-item" onclick="switchTab('add-inventory', this)" class="hidden">ADD ITEM</button>
+                <button id="menu-edit-item" onclick="switchTab('edit-inventory', this)" class="hidden">EDIT INVENTORY</button>
+                <button id="menu-signup" onclick="switchTab('signup-section', this)" class="hidden">CREATE USER</button>
+            </div>
+            <div class="sidebar-footer">
+                <button onclick="switchTab('profile-section', this)">PROFILE</button>
+                <button onclick="handleLogout()" style="color: var(--error);">LOG OUT</button>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="top-navbar">
+                <div class="brand">
+                    <span>☰</span> Bolz Cafe Inventory System
+                </div>
+                <div class="user-pill">
+                    <img id="top-user-img" src="" alt="User">
+                    <span id="top-username">[Username]</span>
+                </div>
             </div>
 
-            <!-- DASHBOARD CONTAINER -->
-            <div id="dashboard-section" class="hidden">
-                <div id="user-welcome"></div>
-                <div class="nav-bar" id="main-nav">
-                    <button onclick="showTab('view-inventory')">Inventory</button>
-                    <button onclick="showTab('low-stocks')">Low Stocks</button>
-                    <button onclick="showTab('deduct-stock')">Deduct Item</button>
-                    <button id="manager-add-btn" class="hidden" onclick="showTab('add-inventory')">Add Item</button>
-                    <button id="manager-edit-btn" class="hidden" onclick="showTab('edit-inventory')">Edit Inventory</button>
-                    <button id="manager-signup-btn" class="hidden" onclick="showTab('signup-section')">Create User</button>
-                    <button onclick="showTab('profile-section')">Profile</button>
-                    <button class="logout-btn" onclick="handleLogout()">Log Out</button>
-                </div>
-
+            <div class="content-body">
                 <!-- 1. VIEW INVENTORY -->
-                <div id="tab-view-inventory" class="tab-content">
-                    <h3>Current Inventory Listing</h3>
-                    <button class="tab-action-btn" onclick="loadInventory()">🔄 Refresh Data</button>
-                    <div class="table-responsive">
-                        <table id="inventory-table">
-                            <thead>
-                                <tr>
-                                    <th>Image</th>
-                                    <th>Name</th>
-                                    <th>Description</th>
-                                    <th>Quantity</th>
-                                    <th>Received</th>
-                                    <th>Expiry</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
+                <div id="tab-view-inventory" class="tab-pane">
+                    <h3>Current Inventory Listing:</h3>
+                    <div id="inventory-card-list"></div>
                 </div>
 
                 <!-- 2. LOW STOCKS -->
-                <div id="tab-low-stocks" class="tab-content hidden">
-                    <h3>Low Stock Alerts (Quantity < 10)</h3>
-                    <div class="table-responsive">
-                        <table id="low-stock-table">
-                            <thead>
-                                <tr>
-                                    <th>Image</th>
-                                    <th>Name</th>
-                                    <th>Quantity Status</th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
+                <div id="tab-low-stocks" class="tab-pane hidden">
+                    <h3>Low Stocks Listing:</h3>
+                    <div id="low-stock-card-list"></div>
+                </div>
+
+                <!-- 3. DEDUCT ITEM -->
+                <div id="tab-deduct-stock" class="tab-pane hidden">
+                    <h3>Item Quantity Deduction:</h3>
+                    <div class="form-card-container" style="max-width: 500px;">
+                        <label>Select Item</label>
+                        <select id="deduct-item-select"></select>
+                        <label>Deduct Quantity</label>
+                        <input type="number" id="deduct-amount" min="1" value="1">
+                        <button class="submit-btn" onclick="submitDeduction()">DEDUCT</button>
+                        <div style="clear: both;"></div>
                     </div>
                 </div>
 
-                <!-- 3. DEDUCT QUANTITY -->
-                <div id="tab-deduct-stock" class="tab-content hidden">
-                    <h3>Item Quantity Deduction</h3>
-                    <label>Select Item Name</label>
-                    <select id="deduct-item-select"></select>
-                    <label>Deduct Quantity Amount</label>
-                    <input type="number" id="deduct-amount" min="1" value="1">
-                    <button class="tab-action-btn" onclick="submitDeduction()">Confirm Deduction</button>
-                </div>
-
-                <!-- 4. ADD INVENTORY (Manager Only) -->
-                <div id="tab-add-inventory" class="tab-content hidden">
-                    <h3>Add New Inventory Item</h3>
-                    <label>Item Name</label>
-                    <input type="text" id="add-name" placeholder="e.g., Arabica Beans">
-                    <label>Description</label>
-                    <input type="text" id="add-desc" placeholder="e.g., 1kg premium pack">
-                    <label>Quantity</label>
-                    <input type="number" id="add-qty" placeholder="0">
-                    <label>Delivery/Received Date</label>
-                    <input type="date" id="add-rcv-date">
-                    <label>Expiration Date</label>
-                    <input type="date" id="add-exp-date">
-                    <label>Item Picture URL</label>
-                    <input type="text" id="add-pic" placeholder="https://...">
-                    <button class="tab-action-btn" onclick="submitAddInventory()">Save Item to Database</button>
+                <!-- 4. ADD ITEM (Manager Only) -->
+                <div id="tab-add-inventory" class="tab-pane hidden">
+                    <h3>Add New Item Info</h3>
+                    <div class="form-card-container">
+                        <label>Item Name</label>
+                        <input type="text" id="add-name" placeholder="[NAME]">
+                        <label>Description</label>
+                        <input type="text" id="add-desc" placeholder="[DESCRIPTION]">
+                        <label>Quantity</label>
+                        <input type="number" id="add-qty" placeholder="[QUANTITY]">
+                        <label>Received Date</label>
+                        <input type="date" id="add-rcv-date">
+                        <label>Expiry Date</label>
+                        <input type="date" id="add-exp-date">
+                        <label>Picture URL</label>
+                        <input type="text" id="add-pic" placeholder="[IMAGE URL]">
+                        <button class="submit-btn" onclick="submitAddInventory()">ADD ITEM</button>
+                        <div style="clear: both;"></div>
+                    </div>
                 </div>
 
                 <!-- 5. EDIT INVENTORY (Manager Only) -->
-                <div id="tab-edit-inventory" class="tab-content hidden">
-                    <h3>Edit/Remove Existing Inventory</h3>
-                    <label>Select Item to Modify</label>
-                    <select id="edit-item-select"></select>
-                    <label>New Quantity</label>
-                    <input type="number" id="edit-qty" placeholder="Updated quantity">
-                    <label>Update Received Date</label>
-                    <input type="date" id="edit-rcv-date">
-                    <br>
-                    <button class="tab-action-btn" onclick="submitEditInventory(false)">Update Item Details</button>
-                    <button class="tab-action-btn danger" onclick="submitEditInventory(true)">Delete Item</button>
+                <div id="tab-edit-inventory" class="tab-pane hidden">
+                    <h3>Edit Inventory Listings:</h3>
+                    <div id="edit-card-list"></div>
                 </div>
 
-                <!-- 6. SIGN UP / CREATE PROFILE (Manager Only) -->
-                <div id="tab-signup-section" class="tab-content hidden">
-                    <h3>Create User Profile (Manager Privilege)</h3>
-                    <label>Email Address</label>
-                    <input type="email" id="su-email" placeholder="user@bolzcafe.com">
-                    <label>Full Name</label>
-                    <input type="text" id="su-fullname" placeholder="Juan Dela Cruz">
-                    <label>Username</label>
-                    <input type="text" id="su-username" placeholder="username123">
-                    <label>Password</label>
-                    <input type="password" id="su-password" placeholder="Secure password">
-                    <label>Security PIN (Numeric)</label>
-                    <input type="password" id="su-pin" placeholder="6-digit PIN" maxlength="6">
-                    <label>Profile Picture URL</label>
-                    <input type="text" id="su-pic" placeholder="https://...">
-                    <label>Account Role</label>
-                    <select id="su-role">
-                        <option value="Employee">Employee</option>
-                        <option value="Manager">Manager</option>
-                    </select>
-                    <button class="tab-action-btn" onclick="submitSignUp()">Create Account Profile</button>
+                <!-- 6. CREATE USER (Manager Only) -->
+                <div id="tab-signup-section" class="tab-pane hidden">
+                    <h3>Create Users</h3>
+                    <div class="form-card-container">
+                        <label>Email</label>
+                        <input type="email" id="su-email">
+                        <label>User Name</label>
+                        <input type="text" id="su-username">
+                        <label>Full Name</label>
+                        <input type="text" id="su-fullname">
+                        <label>Password</label>
+                        <input type="password" id="su-password">
+                        <label>Security PIN</label>
+                        <input type="password" id="su-pin" maxlength="6">
+                        <label>Profile Picture URL</label>
+                        <input type="text" id="su-pic">
+                        <label>Role</label>
+                        <select id="su-role">
+                            <option value="Employee">Employee</option>
+                            <option value="Manager">Manager</option>
+                        </select>
+                        <button class="submit-btn" onclick="submitSignUp()">Create User</button>
+                        <div style="clear: both;"></div>
+                    </div>
                 </div>
 
-                <!-- 7. VIEW/EDIT PROFILE -->
-                <div id="tab-profile-section" class="tab-content hidden">
-                    <h3>My Profile Overview</h3>
-                    <div class="profile-card">
-                        <img id="prof-img" src="" alt="Profile Picture">
-                        <div class="profile-info">
-                            <p><strong>Full Name:</strong> <span id="prof-name"></span></p>
-                            <p><strong>Email:</strong> <span id="prof-email"></span></p>
-                            <p><strong>Role:</strong> <span id="prof-role"></span></p>
+                <!-- 7. PROFILE VIEW -->
+                <div id="tab-profile-section" class="tab-pane hidden">
+                    <div class="profile-wireframe">
+                        <div class="profile-header-flex">
+                            <img id="prof-img" class="profile-avatar-circle" src="" alt="Profile">
+                        </div>
+                        <div class="profile-details-grid">
+                            <p><strong>EMAIL:</strong> <span id="prof-email"></span></p>
+                            <p><strong>USER NAME:</strong> <span id="prof-username"></span></p>
+                            <p><strong>FULL NAME:</strong> <span id="prof-fullname"></span></p>
+                            <p><strong>PASSWORD:</strong> ********</p>
+                            <p><strong>SECURITY PIN:</strong> ******</p>
+                            <p><strong>ROLE:</strong> <span id="prof-role"></span></p>
                         </div>
                     </div>
                 </div>
@@ -429,6 +513,7 @@
         </div>
     </div>
 
+    <!-- SCRIPT BRIDGE TO APPS SCRIPT -->
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxVXtEo3eWOP5fX3pxJqZBvYJWCcILrJPzuZaLtMU8DCxhU1cmVbCIPuoOzU7IqaCgu/exec"; 
         let currentUser = null;
@@ -453,8 +538,8 @@
 
                 if (result.status === "success") {
                     currentUser = result;
+                    currentUser.username = username;
                     wrongAttempts = 0;
-                    errDiv.innerText = "";
                     errDiv.classList.add('hidden');
                     initDashboard();
                 } else {
@@ -475,27 +560,32 @@
         function initDashboard() {
             document.getElementById('login-section').classList.add('hidden');
             document.getElementById('dashboard-section').classList.remove('hidden');
-            document.getElementById('user-welcome').innerHTML = `<h3>Welcome back, <strong>${currentUser.fullname}</strong> (${currentUser.role})</h3>`;
+            
+            document.getElementById('top-username').innerText = currentUser.username || currentUser.fullname;
+            document.getElementById('top-user-img').src = currentUser.profilePic || 'https://via.placeholder.com/28';
 
-            document.getElementById('prof-name').innerText = currentUser.fullname;
+            // Profile info populate
             document.getElementById('prof-email').innerText = currentUser.email;
+            document.getElementById('prof-username').innerText = currentUser.username;
+            document.getElementById('prof-fullname').innerText = currentUser.fullname;
             document.getElementById('prof-role').innerText = currentUser.role;
-            document.getElementById('prof-img').src = currentUser.profilePic || 'https://via.placeholder.com/110';
+            document.getElementById('prof-img').src = currentUser.profilePic || 'https://via.placeholder.com/90';
 
             if (currentUser.role === "Manager") {
-                document.getElementById('manager-add-btn').classList.remove('hidden');
-                document.getElementById('manager-edit-btn').classList.remove('hidden');
-                document.getElementById('manager-signup-btn').classList.remove('hidden');
+                document.getElementById('menu-add-item').classList.remove('hidden');
+                document.getElementById('menu-edit-item').classList.remove('hidden');
+                document.getElementById('menu-signup').classList.remove('hidden');
             }
             loadInventory();
         }
 
-        function showTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            if(tabName === 'signup-section') {
-                document.getElementById('tab-signup-section').classList.remove('hidden');
-            } else {
-                document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+        function switchTab(tabName, btnElement) {
+            document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            
+            if(btnElement) {
+                document.querySelectorAll('.sidebar-menu button, .sidebar-footer button').forEach(b => b.classList.remove('active'));
+                btnElement.classList.add('active');
             }
         }
 
@@ -504,45 +594,85 @@
                 let res = await fetch(`${SCRIPT_URL}?action=getInventory`);
                 inventoryData = await res.json();
                 
-                let tbody = document.querySelector('#inventory-table tbody');
-                let lowTbody = document.querySelector('#low-stock-table tbody');
+                let viewList = document.getElementById('inventory-card-list');
+                let lowList = document.getElementById('low-stock-card-list');
+                let editList = document.getElementById('edit-card-list');
                 let deductSelect = document.getElementById('deduct-item-select');
-                let editSelect = document.getElementById('edit-item-select');
 
-                tbody.innerHTML = '';
-                lowTbody.innerHTML = '';
+                viewList.innerHTML = '';
+                lowList.innerHTML = '';
+                editList.innerHTML = '';
                 deductSelect.innerHTML = '';
-                editSelect.innerHTML = '';
 
                 inventoryData.forEach(item => {
-                    let picUrl = item['Item Picture'] || item.ItemPicture || 'https://via.placeholder.com/50';
-                    let rcvDate = item['Delivery/Received Date'] || item.ReceivedDate || '';
-                    let expDate = item['Expiry Date'] || item.ExpiryDate || '';
+                    let picUrl = item['Item Picture'] || item.ItemPicture || 'https://via.placeholder.com/90';
+                    let rcvDate = item['Delivery/Received Date'] || item.ReceivedDate || '---';
+                    let expDate = item['Expiry Date'] || item.ExpiryDate || '---';
+                    let desc = item.Description || '---';
+                    let qty = item.Quantity || 0;
+                    let name = item.Name || 'Unnamed';
 
-                    // Main Inventory Table Row with square rounded thumbnail image
-                    tbody.innerHTML += `
-                        <tr>
-                            <td><img src="${picUrl}" alt="${item.Name}" class="item-thumbnail" onerror="this.src='https://via.placeholder.com/50'"></td>
-                            <td>${item.Name}</td>
-                            <td>${item.Description}</td>
-                            <td>${item.Quantity}</td>
-                            <td>${rcvDate}</td>
-                            <td>${expDate}</td>
-                        </tr>`;
-                    
-                    deductSelect.innerHTML += `<option value="${item.Name}">${item.Name} (Qty: ${item.Quantity})</option>`;
-                    editSelect.innerHTML += `<option value="${item.Name}">${item.Name}</option>`;
+                    // 1. Main View Card
+                    viewList.innerHTML += `
+                        <div class="item-card">
+                            <div class="item-card-left">
+                                <img src="${picUrl}" class="item-img-placeholder" onerror="this.src='https://via.placeholder.com/90'">
+                                <div class="item-details">
+                                    <p class="item-name">[${name}]</p>
+                                    <p>[DESCRIPTION]: ${desc}</p>
+                                    <p>[RECEIVED]: ${rcvDate} &nbsp;|&nbsp; [EXPIRY]: ${expDate}</p>
+                                </div>
+                            </div>
+                            <div class="item-card-right">
+                                <div class="qty-badge">[QUANTITY]: ${qty}</div>
+                            </div>
+                        </div>`;
 
-                    // Low stocks check (< 10)
-                    if (parseInt(item.Quantity) < 10) {
-                        lowTbody.innerHTML += `
-                            <tr>
-                                <td><img src="${picUrl}" alt="${item.Name}" class="item-thumbnail" onerror="this.src='https://via.placeholder.com/50'"></td>
-                                <td>${item.Name}</td>
-                                <td style="color:var(--error); font-weight:600;">⚠️ Low Stock (${item.Quantity})</td>
-                            </tr>`;
+                    // Deduct Select Options
+                    deductSelect.innerHTML += `<option value="${name}">${name} (Qty: ${qty})</option>`;
+
+                    // 2. Low Stocks View Card (< 10)
+                    if (parseInt(qty) < 10) {
+                        lowList.innerHTML += `
+                            <div class="item-card">
+                                <div class="item-card-left">
+                                    <img src="${picUrl}" class="item-img-placeholder" onerror="this.src='https://via.placeholder.com/90'">
+                                    <div class="item-details">
+                                        <p class="item-name">[${name}]</p>
+                                        <p>[DESCRIPTION]: ${desc}</p>
+                                        <p style="color:var(--error);">[LOW STOCK ALERT]</p>
+                                    </div>
+                                </div>
+                                <div class="item-card-right">
+                                    <div class="qty-badge" style="border-color:var(--error); color:var(--error);">[QTY]: ${qty}</div>
+                                </div>
+                            </div>`;
+                    }
+
+                    // 3. Edit Inventory View Card (Manager Only)
+                    if(currentUser && currentUser.role === "Manager") {
+                        editList.innerHTML += `
+                            <div class="item-card">
+                                <div class="item-card-left">
+                                    <img src="${picUrl}" class="item-img-placeholder" onerror="this.src='https://via.placeholder.com/90'">
+                                    <div class="item-details">
+                                        <p class="item-name">[${name}]</p>
+                                        <p>[DESCRIPTION]: ${desc}</p>
+                                        <label style="margin-top:5px; font-size:0.75rem;">UPDATE QUANTITY:</label>
+                                        <input type="number" id="edit-qty-${name}" value="${qty}" style="width:100px; padding:4px; margin-bottom:0;">
+                                    </div>
+                                </div>
+                                <div class="item-card-right">
+                                    <button class="submit-btn" style="float:none; padding:6px 12px; font-size:0.8rem;" onclick="submitEditItem('${name}')">UPDATE</button>
+                                    <button class="action-link-btn" style="color:var(--error);" onclick="submitDeleteItem('${name}')">Delete Item</button>
+                                </div>
+                            </div>`;
                     }
                 });
+
+                if(lowList.innerHTML === '') {
+                    lowList.innerHTML = `<p style="color:var(--text-light); text-align:center; padding:2rem;">No low stock items found.</p>`;
+                }
             } catch(e) { console.error("Error loading inventory", e); }
         }
 
@@ -559,7 +689,7 @@
             };
             await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) });
             alert("User profile created successfully!");
-            showTab('view-inventory');
+            switchTab('view-inventory', document.getElementById('nav-inventory'));
         }
 
         async function submitAddInventory() {
@@ -575,21 +705,33 @@
             await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) });
             alert("Item added successfully!");
             loadInventory();
-            showTab('view-inventory');
+            switchTab('view-inventory', document.getElementById('nav-inventory'));
         }
 
-        async function submitEditInventory(isDelete) {
+        async function submitEditItem(itemName) {
+            let newQty = document.getElementById(`edit-qty-${itemName}`).value;
             let data = {
                 action: "updateInventory",
-                name: document.getElementById('edit-item-select').value,
-                quantity: document.getElementById('edit-qty').value,
-                receivedDate: document.getElementById('edit-rcv-date').value,
-                deleteItem: isDelete
+                name: itemName,
+                quantity: newQty,
+                deleteItem: false
             };
             await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) });
-            alert(isDelete ? "Item deleted from database!" : "Item updated successfully!");
+            alert("Item updated successfully!");
             loadInventory();
-            showTab('view-inventory');
+        }
+
+        async function submitDeleteItem(itemName) {
+            if(!confirm(`Are you sure you want to delete ${itemName}?`)) return;
+            let data = {
+                action: "updateInventory",
+                name: itemName,
+                quantity: 0,
+                deleteItem: true
+            };
+            await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) });
+            alert("Item deleted successfully!");
+            loadInventory();
         }
 
         async function submitDeduction() {
@@ -601,7 +743,7 @@
             await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) });
             alert("Stock deducted successfully!");
             loadInventory();
-            showTab('view-inventory');
+            switchTab('view-inventory', document.getElementById('nav-inventory'));
         }
 
         function handleLogout() {
